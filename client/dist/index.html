@@ -1,0 +1,97 @@
+<head>
+    <!-- Bootstrap -->
+    <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+        crossorigin="anonymous"
+    />
+    <!-- JS, Popper.js, and jQuery -->
+    <script
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"
+    ></script>
+
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- rpc client -->
+    <script>
+        const rpcPort = 8000
+        const rpcHost = "127.0.0.1"
+        async function rpc (method, ...params) {
+            let data;
+            try {
+                const url = `http://${rpcHost}:${rpcPort}/rpc-run`
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                }
+                const body = JSON.stringify({ method, params, jsonrpc: '2.0', id: 1 })
+                const response = await fetch(url, {method: 'post', body, headers})
+                data = await response.json()
+            } catch (e) {
+                data = {error: {message: `${e}`, code: -32000}, jsonrpc: '2.0', id: 1}
+            }
+            console.log(`rpc`, method, params, '->', data)
+            return data
+        }
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="left mt-5" style="width: 500px; margin: 0 auto">
+            <h3>{{ message }}</h3>
+
+            <div><span class="badge badge-secondary">url:</span> {{ url }}</div>
+
+            <div class="mt-2">
+                <button
+                    type="button"
+                    class="btn btn-small btn-primary"
+                    v-on:click="getConfig"
+                >
+                    Fetch
+                </button>
+            </div>
+
+            <div class="mt-2 badge badge-secondary">config:</div>
+
+            <div>
+                <pre class="text-left">{{ config }}</pre>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'RPC Seed Webapp',
+            url: '',
+            config: '',
+        },
+        async mounted () {
+            this.url = new URL(location.href)
+        },
+        methods: {
+            async getConfig () {
+                const data = await rpc('getConfig')
+                this.config = JSON.stringify(data, null, 2)
+            },
+        },
+    })
+</script>

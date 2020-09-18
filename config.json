@@ -1,0 +1,5 @@
+{
+  "clientDir": "client/dist",
+  "port": 8000,
+  "host": "localhost"
+}
