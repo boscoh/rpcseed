@@ -54,22 +54,22 @@ Options for run scripts:
   
 ### Client to server
 
-Actions are defined in the `handlers` module of the server,
- which are transparently made available to the client.
-
 Communication with the server is directed by the client
-through a wrapper via the RPC-JSON protocol. In the client,
- to call the server:
+through via the RPC-JSON protocol:
 
 ```js
 let data = await rpc('serverFunction', param1, param2)
-console.log(data)
-// { "id": 1, "jsonrpc": "2.0", "result": { "success": true } }
-// on error
-// { "jsonrpc": "2.0", "error": { "code": -1, "message": "You got an error" } }
+if (data.result) {
+    console.log(data.result)
+    // { "success": true }
+} else {
+    console.log(data.error)
+    // { "code": -1, "message": "You got an error" }
+}
 ```
 
-Where the function is defined for Deno server in `deno-server/handlers.ts`:
+In the server, actions are defined in the `handlers` module of the server.
+For Deno, the function is defined in `deno-server/handlers.ts`:
 
 ```typescript
 function serverFunction(param1, param2) {
@@ -77,7 +77,7 @@ function serverFunction(param1, param2) {
 }
 ```
 
-Or in the Python server `flask-server/handlers.py`:
+In Python, it's `flask-server/handlers.py`:
 
 ```python
 def serverFunction(param1, param2):
