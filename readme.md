@@ -58,7 +58,7 @@ Communication with the server is directed by the client
 through via the RPC-JSON protocol:
 
 ```js
-let data = await rpc('serverFunction', param1, param2)
+let data = await remote.serverFunction(param1, param2)
 if (data.result) {
     console.log(data.result)
     // { "success": true }

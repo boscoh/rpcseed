@@ -29,7 +29,7 @@
     <!-- rpc client -->
     <script>
         const rpcPort = 8000
-        const rpcHost = "127.0.0.1"
+        const rpcHost = "localhost"
         async function rpc (method, ...params) {
             let data;
             try {
@@ -47,6 +47,19 @@
             console.log(`rpc`, method, params, '->', data)
             return data
         }
+
+        class RpcClass {
+            constructor(){
+                return new Proxy(this, {
+                    get(target, prop) {
+                        return async function() {
+                            return await rpc(prop, ...arguments)
+                        };
+                    }
+                });
+            }
+        }
+        const remote = new RpcClass();
     </script>
 </head>
 
@@ -77,7 +90,7 @@
 </body>
 
 <script>
-    var app = new Vue({
+    new Vue({
         el: '#app',
         data: {
             message: 'RPC Seed Webapp',
@@ -89,7 +102,7 @@
         },
         methods: {
             async getConfig () {
-                const data = await rpc('getConfig')
+                const data = await remote.getConfig()
                 this.config = JSON.stringify(data, null, 2)
             },
         },
