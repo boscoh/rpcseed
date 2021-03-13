@@ -13,7 +13,6 @@ const http = require('http')
 const { openUrlInBackground } = require('./url.js')
 const handlers = require('./handlers.js')
 
-
 let configFname = path.join(path.dirname(__filename), `../../config.json`)
 const config = JSON.parse(fs.readFileSync(configFname))
 
@@ -24,7 +23,6 @@ for (let [k, v] of Object.entries(config)) {
 const clientDir = path.join(path.dirname(configFname), `${config.clientDir}`)
 
 const port = config.port
-
 
 const router = new Router()
 

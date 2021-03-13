@@ -91,18 +91,29 @@ def rpc_run():
         }
     """
     data = json.loads(request.data)
-    id = data.get('id', None)
+    id = data.get("id", None)
     method = data.get("method")
     if not hasattr(handlers, method):
-        return jsonify({"error": {"code": -32601, "message": 'Method not found', "jsonrpc": "2.0", "id": id}})
+        return jsonify(
+            {
+                "error": {
+                    "code": -32601,
+                    "message": "Method not found",
+                    "jsonrpc": "2.0",
+                    "id": id,
+                }
+            }
+        )
     params = data.get("params", [])
     try:
         fn = getattr(handlers, method)
         result = fn(*params)
-        return jsonify({"result": result, "jsonrpc": "2.0","id": id})
+        return jsonify({"result": result, "jsonrpc": "2.0", "id": id})
     except Exception as e:
         print(traceback.format_exc())
-        return jsonify({"error": {"code": -1, "message": str(e)}, "jsonrpc": "2.0", "id": id})
+        return jsonify(
+            {"error": {"code": -1, "message": str(e)}, "jsonrpc": "2.0", "id": id}
+        )
 
 
 def open_url_in_background(url, sleep_in_s=1):

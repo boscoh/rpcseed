@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
-config = {}
+
+
+config = {"target_dir": Path("../data/json")}
 
 
 def setConfig(k, v):
@@ -11,10 +13,9 @@ def getConfig():
     return config
 
 
-def getData(name):
+def getDataFromJson(name):
     fname = name
-    if not name.endswith('.json'):
+    if not name.endswith(".json"):
         fname = f"{fname}.json"
-    target_dir = Path('../data/json')
-    with open(target_dir / fname) as f:
+    with open(config["target_dir"] / fname) as f:
         return json.load(f)
