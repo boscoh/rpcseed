@@ -30,25 +30,36 @@
     <script>
         const rpcPort = 8000
         const rpcHost = "localhost"
+        const url = `http://${rpcHost}:${rpcPort}/rpc-run`
+        // const url = `./rpc-run`
+
         async function rpc (method, ...params) {
-            let data;
-            try {
-                const url = `http://${rpcHost}:${rpcPort}/rpc-run`
-                const headers = {
+          const id = Math.random().toString(36).slice(-6);
+          console.log(`rpc-run ${method}:`, params)
+          try {
+            const payload = { method, params, jsonrpc: '2.0', id }
+            if ('electron' in window) {
+              return await window.electron.rpc(payload)
+            } else {
+              const response = await fetch(url, {
+                method: 'post',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
-                }
-                const body = JSON.stringify({ method, params, jsonrpc: '2.0', id: 1 })
-                const response = await fetch(url, {method: 'post', body, headers})
-                data = await response.json()
-            } catch (e) {
-                data = {error: {message: `${e}`, code: -32000}, jsonrpc: '2.0', id: 1}
+                },
+                body: JSON.stringify(payload),
+              })
+              return await response.json()
             }
-            console.log(`rpc`, method, params, '->', data)
-            return data
+          } catch (e) {
+            console.log(`rpc-run [fail] ${method} ${e}`)
+            return { error: { message: `${e}`, code: -32000 }, jsonrpc: '2.0', id }
+          }
         }
 
-        class RpcClass {
+        class RemoteRpcProxy {
             constructor(){
                 return new Proxy(this, {
                     get(target, prop) {
@@ -59,12 +70,12 @@
                 });
             }
         }
-        const remote = new RpcClass();
+        const remote = new RemoteRpcProxy();
     </script>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class="p-3">
         <div class="left mt-5" style="width: 500px; margin: 0 auto">
             <h3>{{ message }}</h3>
 

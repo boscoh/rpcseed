@@ -1,2 +1,2 @@
-cd flask-server
+cd py-flask
 python server.py

@@ -1,2 +1,2 @@
-cd deno-server
+cd deno-oak
 ./run.sh
