@@ -1,0 +1,43 @@
+html
+    head
+        //  Bootstrap - files, styles, js, popper.js and jquery
+        link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' integrity='sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z' crossorigin="anonymous")
+        script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js' integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj' crossorigin="anonymous")
+        script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js' integrity='sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN' crossorigin="anonymous")
+        script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js' integrity='sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV' crossorigin="anonymous")
+
+        //  Vue - will load window.Vue as a class
+        script(src='https://cdn.jsdelivr.net/npm/vue/dist/vue.js')
+
+        //  remote rpc client - will load window.remote as a module
+        script(src='./remote-rpc.js')
+    body
+        #app
+            .d-flex.justify-content-center
+                .p-5.mt-5.col-sm-12.col-md-8.col-lg-6
+                    h3 {{ message }}
+                    span.badge.badge-secondary url: {{ url }}
+                    .mt-2
+                        button.btn.btn-primary(v-on:click='getConfig') Fetch
+                    .mt-2.badge.badge-secondary config:
+                    pre {{ config }}
+        script.
+
+            new Vue({
+                el: '#app',
+                data: {
+                    message: 'RPC Seed We`bapp',
+                    url: '',
+                    config: '',
+                },
+                async mounted() {
+                    this.url = new URL(location.href)
+                },
+                methods: {
+                    async getConfig() {
+                        let result = await remote.getConfig()
+                        this.config = JSON.stringify(result, null, 2)
+                    },
+                },
+            })
+

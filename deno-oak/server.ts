@@ -6,6 +6,7 @@ import {
 } from 'https://deno.land/x/oak/mod.ts'
 import { oakCors } from 'https://deno.land/x/cors/mod.ts'
 import { existsSync, readJson } from 'https://deno.land/std/fs/mod.ts'
+import * as path from "https://deno.land/std@0.90.0/path/mod.ts";
 import { parse } from 'https://deno.land/std/flags/mod.ts'
 
 // Imports the handlers used in the route /rpc-run
@@ -33,7 +34,7 @@ router.get('/', async context => {
 
 router.get('/:path', async context => {
   if (context.params?.path) {
-    const f = `${clientDir}${context.params.path}`
+    const f = path.join(clientDir, context.params.path)
     console.log(f, existsSync(f))
     if (existsSync(f)) {
       await send(context, context.params.path, { root: clientDir })

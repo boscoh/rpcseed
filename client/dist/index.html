@@ -1,121 +1,45 @@
-<head>
-    <!-- Bootstrap -->
-    <link
-        rel="stylesheet"
-        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-        crossorigin="anonymous"
-    />
-    <!-- JS, Popper.js, and jQuery -->
-    <script
-        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"
-    ></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"
-    ></script>
-    <script
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"
-    ></script>
 
-    <!-- Vue -->
+<html>
+  <head>
+    <!--  Bootstrap - files, styles, js, popper.js and jquery-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <!--  Vue - will load window.Vue as a class-->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-    <!-- rpc client -->
-    <script>
-        const rpcPort = 8000
-        const rpcHost = "localhost"
-        const url = `http://${rpcHost}:${rpcPort}/rpc-run`
-        // const url = `./rpc-run`
-
-        async function rpc (method, ...params) {
-          const id = Math.random().toString(36).slice(-6);
-          console.log(`rpc-run ${method}:`, params)
-          try {
-            const payload = { method, params, jsonrpc: '2.0', id }
-            if ('electron' in window) {
-              return await window.electron.rpc(payload)
-            } else {
-              const response = await fetch(url, {
-                method: 'post',
-                mode: 'cors',
-                cache: 'no-cache',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                },
-                body: JSON.stringify(payload),
-              })
-              return await response.json()
-            }
-          } catch (e) {
-            console.log(`rpc-run [fail] ${method} ${e}`)
-            return { error: { message: `${e}`, code: -32000 }, jsonrpc: '2.0', id }
-          }
-        }
-
-        class RemoteRpcProxy {
-            constructor(){
-                return new Proxy(this, {
-                    get(target, prop) {
-                        return async function() {
-                            return await rpc(prop, ...arguments)
-                        };
-                    }
-                });
-            }
-        }
-        const remote = new RemoteRpcProxy();
-    </script>
-</head>
-
-<body>
-    <div id="app" class="p-3">
-        <div class="left mt-5" style="width: 500px; margin: 0 auto">
-            <h3>{{ message }}</h3>
-
-            <div><span class="badge badge-secondary">url:</span> {{ url }}</div>
-
-            <div class="mt-2">
-                <button
-                    type="button"
-                    class="btn btn-small btn-primary"
-                    v-on:click="getConfig"
-                >
-                    Fetch
-                </button>
-            </div>
-
-            <div class="mt-2 badge badge-secondary">config:</div>
-
-            <div>
-                <pre class="text-left">{{ config }}</pre>
-            </div>
+    <!--  remote rpc client - will load window.remote as a module-->
+    <script src="./remote-rpc.js"></script>
+  </head>
+  <body>
+    <div class="d-flex justify-content-center" id="app">
+      <div class="p-5 mt-5 col-sm-12 col-md-8 col-lg-6">
+        <h3>{{ message }}</h3><span class="badge badge-secondary">url: {{ url }}</span>
+        <div class="mt-2">
+          <button class="btn btn-primary" v-on:click="getConfig">Fetch</button>
         </div>
+        <div class="mt-2 badge badge-secondary">config:</div>
+        <pre>{{ config }}</pre>
+      </div>
     </div>
-</body>
-
-<script>
-    new Vue({
-        el: '#app',
-        data: {
-            message: 'RPC Seed Webapp',
-            url: '',
-            config: '',
-        },
-        async mounted () {
-            this.url = new URL(location.href)
-        },
-        methods: {
-            async getConfig () {
-                const data = await remote.getConfig()
-                this.config = JSON.stringify(data, null, 2)
-            },
-        },
-    })
-</script>
+    <script>
+      new Vue({
+          el: '#app',
+          data: {
+              message: 'RPC Seed Webapp',
+              url: '',
+              config: '',
+          },
+          async mounted () {
+              this.url = new URL(location.href)
+          },
+          methods: {
+              async getConfig () {
+                let result = await remote.getConfig()
+                this.config = JSON.stringify(result, null, 2)
+              },
+          },
+      })
+    </script>
+  </body>
+</html>
