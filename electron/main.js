@@ -4,7 +4,6 @@ const path = require('path')
 const fs = require('fs')
 
 function createWindow (clientDir) {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -12,34 +11,26 @@ function createWindow (clientDir) {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-
-  // and load the index.html of the app.
   mainWindow.loadFile(path.join(clientDir, 'index.html'))
-
-  // Open the DevTools.
   mainWindow.webContents.openDevTools()
 }
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
 const handlers = require('../node-koa/src/handlers')
 
-let configFname = path.join(path.dirname(__filename), `../config.json`)
-const config = JSON.parse(fs.readFileSync(configFname))
+let fname = path.join(path.dirname(__filename), `../config.json`)
+const config = JSON.parse(fs.readFileSync(fname))
 
 for (let [k, v] of Object.entries(config)) {
   handlers.setConfig(k, v)
 }
 
-const clientDir = path.join(path.dirname(configFname), `${config.clientDir}`)
+const clientDir = path.join(path.dirname(fname), `${config.clientDir}`)
 
 app.whenReady().then(() => {
   createWindow(clientDir)
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
+    // macOS: re-create a window when the dock icon is clicked and no other windows are opened.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })

@@ -30,6 +30,9 @@ router.get('/', async context => {
   await send(context, 'index.html', { root: clientDir })
 })
 
+/**
+ * All routes with get are redirected to the client_dir for static assets
+ */
 router.get('/:path', async context => {
   if (context.params?.path) {
     const f = `${clientDir}/${context.params.path}`
@@ -41,22 +44,50 @@ router.get('/:path', async context => {
   }
 })
 
+
+/**
+ * RPC receiver for a web-client.
+ *
+ * Requests to run functions on the server are received from the post-body
+ * using the JSON-RPC format:
+ *
+ *  payload = {
+ *     'method': {string} - name of fn in `handlers`
+ *     'params': {[Any]} - parameters of fn
+ *     'jsonrpc': '2.0',
+ *     'id': {string} - id of request
+ *   }
+ *
+ * This can be tested in a terminal:
+ *
+ *    `curl -H "Content-Type: application/json" -X POST --data '{<payload>}' http://<url>`n
+ *
+ * Say, to run myFunction on the server remotely, the calling code
+ *
+ * This will pass method=functionOnServer, params=[a, b] to the
+ * rpc function, which will package the method & params and send them
+ * to the server, then wait for the results
+ *
+ * The results from the server are then returned asyncronously to
+ * the caller using the JSON-RPC format
+ *
+ * @returns {Promise} - which wraps:
+ *   1. on success:
+ *      {
+ *        success: {
+ *          result: {any} - result returned from the function
+ *        }
+ *      }
+ *   2. on any error:
+ *      {
+ *        error: {
+ *          code: {number},
+ *          message: {string}
+ *        }
+ *      }
+ */
 router.post('/rpc-run', async context => {
-  /**
-   * Test with `curl -H "Content-Type: application/json" -X POST --data '{<payload>}' http://<url>`
-   * :returns: if function completes:
-   *     { "jsonrpc": "2.0", "result": return value of function }
-   *   else if function raises Exception:
-   *     { "jsonrpc": "2.0", "error": { "code": -1, "message": string - exception explanation }, }
-   */
   const requestBody = context.request.body
-  //  expected:
-  //  {
-  //    'method': string - name of fn in `handlers`
-  //    'params': Array<Any> - parameters of fn
-  //    'jsonrpc': '2.0',
-  //    'id': string - id of request
-  //  }
   let responseBody
   if (requestBody) {
     let method = requestBody?.method

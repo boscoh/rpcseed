@@ -10,14 +10,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import handlers
 
-this_dir = Path(__file__).parent
-config_fname = this_dir.parent / ".." / "config.json"
-config = json.load(open(config_fname))
+fname = Path(__file__).parent / ".." / "config.json"
+config = json.load(open(fname))
 
 for k, v in config.items():
     handlers.setConfig(k, v)
 
-client_dir = config_fname.parent / config["clientDir"]
+client_dir = fname.parent / config["clientDir"]
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
