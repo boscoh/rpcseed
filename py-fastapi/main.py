@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 import json
+import traceback
+import inspect
 
 from fastapi import FastAPI
 from fastapi import Request
@@ -10,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import handlers
 
-fname = Path(__file__).parent / ".." / "config.json"
+fname = Path(__file__).resolve().parent.parent / "config.json"
 config = json.load(open(fname))
 
 for k, v in config.items():
@@ -30,28 +32,26 @@ app.add_middleware(
 
 @app.post("/rpc-run")
 async def rpc_run(data: dict):
-    logger.debug(data)
-    id = data.get("id", None)
+    job_id = data.get("id", None)
     method = data.get("method")
-    if not hasattr(handlers, method):
-        return jsonify(
-            {
-                "error": {
-                    "code": -32601,
-                    "message": "Method not found",
-                    "jsonrpc": "2.0",
-                    "id": id,
-                }
-            }
-        )
     params = data.get("params", [])
     try:
+        if not hasattr(handlers, method):
+            raise Exception(f"rpc-run {method} is not found")
         fn = getattr(handlers, method)
-        result = fn(*params)
-        return {"result": result, "jsonrpc": "2.0", "id": id}
+        if inspect.iscoroutinefunction(fn):
+            result = await fn(*params)
+        else:
+            result = fn(*params)
+        logger.debug(f"rpc-run {method}")
+        return {"result": result, "jsonrpc": "2.0", "id": job_id}
     except Exception as e:
         print(traceback.format_exc())
-        return {"error": {"code": -1, "message": str(e)}, "jsonrpc": "2.0", "id": id}
+        return {
+            "error": {"code": -1, "message": str(e)},
+            "jsonrpc": "2.0",
+            "id": job_id,
+        }
 
 
 @app.get("/")
