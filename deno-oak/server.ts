@@ -35,7 +35,7 @@ router.get('/', async context => {
 router.get('/:path', async context => {
   if (context.params?.path) {
     const f = path.join(clientDir, context.params.path)
-    console.log(f, existsSync(f))
+    console.log('fetching file', f, existsSync(f))
     if (existsSync(f)) {
       await send(context, context.params.path, { root: clientDir })
     } else {
@@ -70,6 +70,7 @@ router.get('/:path', async context => {
 router.post('/rpc-run', async (context: Context) => {
   const body = context.request.body()
   let responseBody: any
+  console.log('rpc-run',)
   if (body.type === 'json') {
     let value = await body.value
     let id = value?.id
@@ -86,11 +87,8 @@ router.post('/rpc-run', async (context: Context) => {
         const result = await fn(...params)
         responseBody = { result, jsonrpc: '2.0', id }
       } catch (e) {
-        responseBody = {
-          error: { message: `${e}`, code: -32603 },
-          jsonrpc: '2.0',
-          id
-        }
+        const message = `${e}`
+        responseBody = { error: { message, code: -32603 }, jsonrpc: '2.0', id }
       }
     }
   } else {

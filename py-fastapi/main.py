@@ -12,16 +12,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import handlers
 
-fname = Path(__file__).resolve().parent.parent / "config.json"
-config = json.load(open(fname))
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
+app_dir = Path(__file__).resolve().parent.parent
+
+config = json.load(open(app_dir / "config.json"))
 for k, v in config.items():
     handlers.setConfig(k, v)
 
-client_dir = fname.parent / config["clientDir"]
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+client_dir = app_dir / config["clientDir"]
 
 app = FastAPI()
 
@@ -55,7 +55,7 @@ async def rpc_run(data: dict):
 
 
 @app.get("/")
-async def serve_index_htm(request: Request):
+async def serve_index(request: Request):
     return FileResponse(client_dir / "index.html")
 
 

@@ -15,10 +15,7 @@ async function rpc (method, ...params) {
         method: 'post',
         mode: 'cors',
         cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-        },
+        headers: { "Content-Type": "application/json"},
         body: JSON.stringify(payload),
       })
       return await response.json()

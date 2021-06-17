@@ -1,11 +1,11 @@
 let config: { [Key: string]: any } = {}
 
 const handlers: { [Key: string]: Function } = {
-  setConfig (key: string, value: any) {
+  async setConfig (key: string, value: any) {
     config[key] = value
   },
 
-  getConfig () {
+  async getConfig () {
     return config
   }
 }
