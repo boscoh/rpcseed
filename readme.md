@@ -1,57 +1,43 @@
 
 # RPC Seed
 
-Tiny rpc server/client for webapp prototyping.
+Tiny rpc server/client for webapp prototyping. 
 
-Provides:
+Provides a single web-client that can talk (using JSON-RPC) to the following web-servers:
 
-* single file Vue/Bootstrap client 
-* server in Typescript (Deno/Oak)
-* equivalent server in Python 3 (Flask)
-* unrestricted JSON RPC communication protocol using CORS
+  * Deno (Typescript/Oak) - cleanest code
+  * Node (Javascript/Koa) 
+  * Python 3 WSGI (Flask) 
+  * Python 3 ASGI (Fastapi) - async and math libraries
+  * Electron - fake native apps
 
-This is the simplest client/server I use to get started on
-webapp prototypes. 
+The web-client uses Vue, which allows a simple no-compile html file. That way I can focus on business logic.
 
-Deno provides the cleanest client/server code, and
- Python for science/math libraries.
 
-Vue is the fastest prototyping framework and one can
- swap a heavier framework when needed.
+### Quick start
+ 
+__Deno__
+1. install Deno `curl -fsSL https://deno.land/x/install/install.sh | sh`
+2. `./run-deno.sh``
 
-# Quick start
-
-__Deno__. 
-First install Deno on *nix:
-
-```bash
-curl -fsSL https://deno.land/x/install/install.sh | sh
-```
-
-Then 
-
-```bash
-./run-deno.sh
-```
-
-__Or for Python__. 
-Install packages:
-
-```bash
-pip install -r flask-server/requirements.txt
-```
-
-Then:
-
-```bash
-./run-python.sh
-```
-
-Options for run scripts:
-
- * `-n` - don't open browser automatically
- * `-c` - alternate config.json
+__Python/Flask__
+1. `pip install -r py-flask/requirements.txt`
+2. `./run-flask.sh`
   
+__Python/Fastapi__
+1. `pip install -r py-fastapi/requirements.txt`
+2. `./run-fastapi.sh`
+  
+__Node__
+1. `cd node-koa; npm install; cd ..`
+2. `./run-node.sh`
+
+__Electron__
+1. `cd elecstron; npm install; cd ..`
+2. `./run-electron.sh`
+
+Except for Electron, the web-client is served on <http://localhost:8000>
+
 ### Client to server
 
 Communication with the server is directed by the client
@@ -69,7 +55,7 @@ if (data.result) {
 ```
 
 In the server, actions are defined in the `handlers` module of the server.
-For Deno, the function is defined in `deno-server/handlers.ts`:
+For Node, the function is defined in `mode-koa/handlers.ts`:
 
 ```typescript
 function serverFunction(param1, param2) {
@@ -77,7 +63,7 @@ function serverFunction(param1, param2) {
 }
 ```
 
-In Python, it's `flask-server/handlers.py`:
+In Python, it's `py-fastapi/handlers.py`:
 
 ```python
 def serverFunction(param1, param2):
@@ -86,7 +72,7 @@ def serverFunction(param1, param2):
 
 ### Configuration
 
-In the client code, set `rpcHost` and `rpcPort` to define the url to communicate with the server.
+In the client, set `rpcHost` and `rpcPort` to define the url to communicate with the server.
 
 For the server, set the receiving `port` in the top level `config.json`. It's up to you 
 to decide where to deploy, normally `localhost` if we run locally.
