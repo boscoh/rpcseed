@@ -1,3 +1,2 @@
-cd electron
-npm install
-npm run start
+cd electron-app
+./run.sh
