@@ -1,5 +1,7 @@
 {
   "clientDir": "client",
+  "dataDir": "data",
   "port": 8000,
-  "host": "localhost"
+  "host": "localhost",
+  "apiUrl": "http://localhost:8000"
 }

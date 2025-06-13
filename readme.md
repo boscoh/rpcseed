@@ -18,7 +18,7 @@ The web-client uses Vue, which allows a simple no-compile html file. That way I 
  
 __Deno__
 1. install Deno `curl -fsSL https://deno.land/x/install/install.sh | sh`
-2. `./run-deno.sh``
+2. `./run-deno.sh`
 
 __Python/Flask__
 1. `pip install -r py-flask/requirements.txt`
@@ -33,7 +33,7 @@ __Node__
 2. `./run-node.sh`
 
 __Electron__
-1. `cd elecstron; npm install; cd ..`
+1. `cd electron; npm install; cd ..`
 2. `./run-electron.sh`
 
 Except for Electron, the web-client is served on <http://localhost:8000>

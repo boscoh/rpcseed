@@ -1,0 +1,22 @@
+{
+  "name": "vue-vite-client",
+  "version": "0.0.1",
+  "main": "src/main.js",
+  "scripts": {
+    "client-dev": "vite",
+    "client-build": "vite build"
+  },
+  "dependencies": {
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "bootstrap": "^5.0.2",
+    "lodash": "^4.17.10",
+    "vue": "^2.6.14",
+    "@fortawesome/fontawesome-free": "^5.15.4"
+  },
+  "devDependencies": {
+    "vite": "^2.3.8",
+    "vite-plugin-pug": "^0.3.0",
+    "vite-plugin-vue2": "^1.6.2",
+    "webpack": "^3.12.0"
+  }
+}

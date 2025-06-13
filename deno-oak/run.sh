@@ -1,1 +1,1 @@
-deno run --allow-all --unstable server.ts "$@"
+deno run --allow-all server.ts "$@"

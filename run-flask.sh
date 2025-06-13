@@ -1,2 +1,2 @@
 cd py-flask
-python server.py
+./run.sh

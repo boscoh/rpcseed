@@ -1,1 +1,1 @@
-python server.py "$@"
+uv run server.py

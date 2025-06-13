@@ -18,10 +18,13 @@ logging.basicConfig(level=logging.DEBUG)
 app_dir = Path(__file__).resolve().parent.parent
 
 config = json.load(open(app_dir / "config.json"))
+client_dir = app_dir / config["clientDir"]
+data_dir = app_dir / config["dataDir"]
+
+handlers.setConfig("dataDir", str(data_dir))
 for k, v in config.items():
     handlers.setConfig(k, v)
 
-client_dir = app_dir / config["clientDir"]
 
 app = FastAPI()
 

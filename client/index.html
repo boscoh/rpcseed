@@ -122,8 +122,9 @@
         return new RemoteRpcProxy()
     }
 
+    const remote = setupRemoteRpcProxy()
+
     function init () {
-        const remote = setupRemoteRpcProxy()
 
         new Vue({
             el: '#app',

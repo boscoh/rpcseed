@@ -5,7 +5,7 @@ import {
   send
 } from 'https://deno.land/x/oak/mod.ts'
 import { oakCors } from 'https://deno.land/x/cors/mod.ts'
-import { existsSync, readJson } from 'https://deno.land/std/fs/mod.ts'
+import { existsSync } from 'https://deno.land/std/fs/mod.ts'
 import * as path from "https://deno.land/std@0.90.0/path/mod.ts";
 import { parse } from 'https://deno.land/std/flags/mod.ts'
 
@@ -20,7 +20,8 @@ if (args.c) {
   config_fname = args.c
 }
 
-const config: any = await readJson(config_fname)
+const text = await Deno.readTextFile(config_fname);
+const config: any = JSON.parse(text);
 for (let [k, v] of Object.entries(config)) {
   handlers.setConfig(k, v)
 }
@@ -68,11 +69,10 @@ router.get('/:path', async context => {
  *       }
  */
 router.post('/rpc-run', async (context: Context) => {
-  const body = context.request.body()
   let responseBody: any
-  console.log('rpc-run',)
-  if (body.type === 'json') {
-    let value = await body.value
+  const requestBody = context.request.body
+  if (requestBody.type() === 'json') {
+    let value = await requestBody.json()
     let id = value?.id
     let method = value?.method
     if (!(method in handlers)) {
