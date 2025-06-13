@@ -10,7 +10,6 @@ const send = require('koa-send')
 const destroyable = require('server-destroy')
 const http = require('http')
 
-const { openUrlInBackground } = require('./url.js')
 const handlers = require('./handlers.js')
 
 let configFname = path.join(path.dirname(__filename), `../../config.json`)
@@ -46,7 +45,7 @@ router.get('/:path', async context => {
 
 
 /**
- * RPC receiver for a web-client.
+ * RPC receiver for a web-one-page-client.
  *
  * Requests to run functions on the server are received from the post-body
  * using the JSON-RPC format:
@@ -120,8 +119,6 @@ router.post('/rpc-run', async context => {
   }
   context.response.body = responseBody
 })
-
-openUrlInBackground(`http://localhost:${port}`)
 
 const app = new Koa()
 app.use(koaBody())

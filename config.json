@@ -1,5 +1,5 @@
 {
-  "clientDir": "client",
+  "clientDir": "one-page-client",
   "dataDir": "data",
   "port": 8000,
   "host": "localhost",

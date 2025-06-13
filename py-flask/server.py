@@ -1,12 +1,8 @@
 import logging
 import os
-import threading
-import time
 import traceback
-import webbrowser
 from argparse import ArgumentParser
 from pathlib import Path
-from urllib.request import urlopen
 
 from flask import Flask, json, jsonify, request, send_from_directory
 from flask_cors import CORS
@@ -46,7 +42,7 @@ def send_public_file(path):
 
 @api.route("/kill-server", methods=["GET"])
 def kill():
-    logger.debug(f"kill-server")
+    logger.debug("kill-server")
     func = request.environ.get("werkzeug.server.shutdown")
     if func is None:
         raise RuntimeError("Not running with the Werkzeug Server")
@@ -116,32 +112,6 @@ def rpc_run():
         )
 
 
-def open_url_in_background(url, sleep_in_s=1):
-    """
-    Setus up a background thread to poll the server until it
-    has started, then attempts to open the webclient in the
-    system web-browser
-    """
-
-    def inner():
-        elapsed = 0
-        while True:
-            try:
-                response_code = urlopen(url).getcode()
-                if response_code < 400:
-                    logger.info(f"open_url_in_background success")
-                    webbrowser.open(url)
-                    return
-            except:
-                time.sleep(sleep_in_s)
-                elapsed += sleep_in_s
-                logger.info(f"open_url_in_background waiting {elapsed}s")
-
-    # creates a thread to poll server before opening client
-    logger.debug(f"open_url_in_background searching {url}")
-    threading.Thread(target=inner).start()
-
-
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--no-open", "-n", action="store_true", help="don't open page")
@@ -169,9 +139,6 @@ def main():
     client_dir = Path("..") / config["clientDir"]
     for k, v in config.items():
         handlers.setConfig(k, v)
-
-    if not args.no_open:
-        open_url_in_background(f"{url}")
 
     logger.info(url)
     api.run(debug=bool(args.debug), port=port)

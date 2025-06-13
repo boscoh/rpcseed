@@ -100,34 +100,6 @@ router.post('/rpc-run', async (context: Context) => {
   context.response.body = responseBody
 })
 
-async function isReadableUrl (url: string) {
-  try {
-    await fetch(url, { method: 'GET' })
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
-async function sleep (ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-async function openUrlInBackground (url: string) {
-  while (!(await isReadableUrl(url))) {
-    await sleep(1000)
-  }
-  for (let sysCmd of ['open', 'start', 'xdg-open']) {
-    try {
-      await Deno.run({ cmd: [sysCmd, url] })
-    } catch (e) {}
-  }
-}
-
-if (!args.n) {
-  openUrlInBackground(`http://${socket}`)
-}
-
 const app = new Application()
 app.use(oakCors())
 app.use(router.routes())

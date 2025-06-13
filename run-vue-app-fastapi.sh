@@ -3,4 +3,4 @@
 #   System Prefs -> Security -> Privacy -> Accessibility: add Terminal
 ttab "cd py-fastapi; ./run.sh"
 ttab "cd vue-app-client; npm install; npm run client-dev"
-./browser.sh "http://localhost:5200" &
+./open-url.sh "http://localhost:5200" &
