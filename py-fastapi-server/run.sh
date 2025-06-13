@@ -1,3 +1,1 @@
-PORT="8000"
-uv sync
-uv run uvicorn main:app --reload --port="$PORT"
+uv run uvicorn main:app --reload --port=8000
