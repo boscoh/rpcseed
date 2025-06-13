@@ -1,3 +1,3 @@
 ./open-url.sh "http://localhost:8000" &
-cd py-flask
+cd py-flask-server
 ./run.sh
