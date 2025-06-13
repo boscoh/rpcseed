@@ -1,7 +1,7 @@
 <template lang="pug">
 .d-flex.flex-row.justify-content-center(style="height: calc(100vh);")
   #col1.mt-5.p-2.d-flex.flex-column
-    h1 3D Model Hotspots
+    h1 RPC Seed Webapp
     pre {{ config }}
 </template>
 
@@ -16,14 +16,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
 import _ from 'lodash'
 import {remote} from '../modules/rpc'
-
-function asyncDelay (time) {
-  return new Promise(function (resolve) {
-    setTimeout(function () {
-      resolve(time)
-    }, time)
-  })
-}
 
 export default {
   name: 'Page',

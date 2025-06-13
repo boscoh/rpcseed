@@ -21,11 +21,11 @@ __Deno__
 2. `./run-deno.sh`
 
 __Python/Flask__
-1. `pip install -r py-flask/requirements.txt`
+1. `curl -LsSf https://astral.sh/uv/install.sh | sh`
 2. `./run-flask.sh`
   
 __Python/Fastapi__
-1. `pip install -r py-fastapi/requirements.txt`
+1. `curl -LsSf https://astral.sh/uv/install.sh | sh`
 2. `./run-fastapi.sh`
   
 __Node__
